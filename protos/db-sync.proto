@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package dbsync;
+
+// Interface exported by the server.
+service DbSync {
+    // A Server-to-client steaming RPC.
+    //
+    // Copies files from source to destination. Results are 
+    // streamed with defined chuncksize rather than returned at once.
+    rpc Copy(Source) returns (stream ResponseData) {}
+}
+
+// A name and chunksize source, represented as data to be coppied from.
+message Source {
+    // name of source data. Could be a file or directory.
+    string name = 1;
+
+    // size of a chunk which will be streamed.
+    int32 chunksize = 2;
+}
+
+
+// A ResponseData is sent back to client.
+message ResponseData {
+    // Data retuning to client.
+    bytes bytedata = 1;
+}
