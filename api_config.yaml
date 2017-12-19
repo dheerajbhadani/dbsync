@@ -21,9 +21,9 @@ apis:
 
 #
 # API usage restrictions.
- #
+#
 usage:
   rules:
     # ListShelves methods can be called without an API Key.
-      - selector: dbsync.DbSync.Copy
-          allow_unregistered_calls: true
+    - selector: dbsync.DbSync.Copy
+      allow_unregistered_calls: true
