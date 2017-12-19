@@ -4,26 +4,26 @@
 # raw source file path is
 # https://raw.githubusercontent.com/GoogleCloudPlatform/python-docs-samples/master/endpoints/bookstore-grpc/api_config.yaml
 #
-# type: google.api.Service
-# config_version: 3
+type: google.api.Service
+config_version: 3
 #
-# #
-# # Name of the service configuration.
-# #
-# name: dbsync.endpoints.kub-project-1.cloud.goog
 #
-# #
-# # API title to appear in the user interface (Google Cloud Console).
-# #
-# title: DbSync gRPC API
-# apis:
-# - name: dbsync.DbSync
+# Name of the service configuration.
 #
-# #
-# # API usage restrictions.
-# #
-# usage:
-#   rules:
-#     # ListShelves methods can be called without an API Key.
-#       - selector: dbsync.DbSync.Copy
-#           allow_unregistered_calls: true
+name: dbsync.endpoints.kub-project-1.cloud.goog
+
+#
+# API title to appear in the user interface (Google Cloud Console).
+#
+title: DbSync gRPC API
+apis:
+- name: dbsync.DbSync
+
+#
+# API usage restrictions.
+ #
+usage:
+  rules:
+    # ListShelves methods can be called without an API Key.
+      - selector: dbsync.DbSync.Copy
+          allow_unregistered_calls: true
