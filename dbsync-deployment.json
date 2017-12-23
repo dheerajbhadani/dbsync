@@ -1,0 +1,64 @@
+{
+  "kind": "Deployment",
+  "apiVersion": "extensions/v1beta1",
+  "metadata": {
+    "name": "dbsync",
+    "labels": {
+      "app": "dbsync",
+      "version": "v1"
+    }
+  },
+  "spec": {
+    "replicas": 1,
+    "selector": {
+      "matchLabels": {
+        "app": "dbsync",
+        "version": "v1"
+      }
+    },
+    "template": {
+      "metadata": {
+        "name": "dbsync",
+        "creationTimestamp": null,
+        "labels": {
+          "app": "dbsync",
+          "version": "v1"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "dbsync",
+            "image": "dheerajbhadani/dbsync:v1",
+            "resources": {},
+            "terminationMessagePath": "/dev/termination-log",
+            "terminationMessagePolicy": "File",
+            "imagePullPolicy": "IfNotPresent",
+            "securityContext": {
+              "privileged": false
+            }
+          }
+        ],
+        "restartPolicy": "Always",
+        "terminationGracePeriodSeconds": 30,
+        "dnsPolicy": "ClusterFirst",
+        "securityContext": {},
+        "schedulerName": "default-scheduler"
+      }
+    },
+    "strategy": {
+      "type": "RollingUpdate",
+      "rollingUpdate": {
+        "maxUnavailable": 1,
+        "maxSurge": 1
+      }
+    }
+  },
+  "status": {
+    "observedGeneration": 1,
+    "replicas": 1,
+    "updatedReplicas": 1,
+    "readyReplicas": 1,
+    "availableReplicas": 1
+  }
+}
