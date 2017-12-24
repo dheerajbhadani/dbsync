@@ -5,10 +5,14 @@ import grpc
 
 from generated import db_sync_pb2_grpc, db_sync_pb2
 
-SOURCE = "/home/dheerajbhadani/testfiles/output_100M"
-DESTINATION = "/home/dheerajbhadani/destination/output_100M"
-SERVER = 'localhost'
-PORT = 40084
+#SOURCE = "/home/dheerajbhadani/testfiles/output_100M"
+SOURCE = "/var/lib/dbsync/test1"
+
+#DESTINATION = "/home/dheerajbhadani/destination/output_100M"
+DESTINATION = "/var/lib/test1"
+#SERVER = 'localhost'
+SERVER = '35.197.246.234'
+PORT = 80
 CHUNK_SIZE = 8192
 
 _TIMEOUT_SECONDS = 30
