@@ -8,4 +8,10 @@ run-server:
 run-client:
 	python src/client.py
 
+build-docker:
+	docker build -t dbsync:latest .
 
+push-docker:
+	docker login
+	docker tag my-image username/my-repo
+	docker push dheerajbhadani/dbsync

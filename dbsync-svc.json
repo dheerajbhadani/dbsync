@@ -1,0 +1,31 @@
+{
+  "kind": "Service",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "dbsync",
+    "labels": {
+      "app": "dbsync",
+      "version": "v1"
+    }
+  },
+  "spec": {
+    "ports": [
+      {
+        "name": "dbsync-tcp",
+        "protocol": "TCP",
+        "port": 80,
+        "targetPort": 40084
+      }
+    ],
+    "selector": {
+      "app": "dbsync",
+      "version": "v1"
+    },
+    "clusterIP": "10.35.250.183",
+    "type": "LoadBalancer",
+    "sessionAffinity": "None",
+    "externalTrafficPolicy": "Cluster"
+  },
+  "status": {
+  }
+}
