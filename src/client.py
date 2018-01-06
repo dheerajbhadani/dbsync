@@ -4,6 +4,8 @@ import time
 import grpc
 
 from generated import db_sync_pb2_grpc, db_sync_pb2
+import logging
+import socket
 
 #SOURCE = "/home/dheerajbhadani/testfiles/output_100M"
 SOURCE = "/var/lib/dbsync/test1"
@@ -17,6 +19,27 @@ CHUNK_SIZE = 8192
 
 _TIMEOUT_SECONDS = 30
 
+
+"""
+#TODO : 
+[TimeStamp]|[METHOD]|[SOURCE_LOCATION]|[DESTINATION_LOCATION]|
+[Copy Start Time]|[Copy End Time]|[Duration]|[FILESIZE]|[FILETYPE]|
+[LATENCY]
+"""
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+# create a file handler
+handler = logging.FileHandler('client.log')
+handler.setLevel(logging.INFO)
+
+# create a Logging format
+formatter = logging.Formatter('%(asctime)s | %(name)s | %(levelname)s | %(message)s')
+handler.setFormatter(formatter)
+
+# add the handlers to the logger
+logger.addHandler(handler)
 
 class DbSyncClient(object):
     def __init__(self, source, destination, server, port, chunk_size):
@@ -48,7 +71,17 @@ class DbSyncClient(object):
         self.file_data(stub)
         end_time = time.time()
         diff = end_time - start_time
-        print("Start time >> ", start_time, "End time >> ", end_time, "Time taken >> ", diff)
+
+        logger.info('{source} | {start} | {end} | {time_taken} | '
+                    '{server} | {client} | {chunk}'.
+                    format(source = self._source,
+                           start=start_time,
+                           end = end_time,
+                           time_taken=diff,
+                           server = self._server,
+                           client=socket.gethostbyname(socket.gethostname()),
+                           chunk=self._chunk_size))
+        return True
 
 if __name__ == "__main__":
     sync_client = DbSyncClient(SOURCE, DESTINATION, SERVER, PORT, CHUNK_SIZE)
