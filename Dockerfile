@@ -13,6 +13,7 @@ COPY . /app/
 WORKDIR /app
 
 EXPOSE 40084
+RUN make generate-test-resources
 CMD make run-server
 
 
