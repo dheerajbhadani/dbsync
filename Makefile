@@ -15,3 +15,12 @@ push-docker:
 	docker login
 	docker tag my-image username/my-repo
 	docker push dheerajbhadani/dbsync
+run-tests:
+	coverage run --source=. -m unittest discover -s tests/
+show-test-coverage:
+	coverage report -m
+
+generate-test-resources:
+	dd if=/dev/zero of=${PWD}/test_10m count=10 bs=1M
+	dd if=/dev/zero of=${PWD}/test_100m count=100 bs=1M
+	dd if=/dev/zero of=${PWD}/test_250m count=250 bs=1M
