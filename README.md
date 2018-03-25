@@ -46,9 +46,6 @@ Dheeraj Bhadani - Initial work
 See also the list of contributors who participated in this project.
 
 
-License:
---------
-
 
 
 Acknowledgments:
