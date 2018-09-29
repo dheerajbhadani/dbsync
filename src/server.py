@@ -14,11 +14,13 @@
 
 import time
 import grpc
+import argparse
 
 from generated import db_sync_pb2_grpc, db_sync_pb2
 from concurrent import futures
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
+
 
 class DbSyncServicer(db_sync_pb2_grpc.DbSyncServicer):
     """Implements the dbsync API server."""
@@ -33,17 +35,30 @@ class DbSyncServicer(db_sync_pb2_grpc.DbSyncServicer):
                 yield response
 
 
-def serve():
+def serve(port, shutdown_grace_duration):
     """Configures and runs the dbsync API server."""
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    
     db_sync_pb2_grpc.add_DbSyncServicer_to_server(DbSyncServicer(), server)
-    server.add_insecure_port('[::]:40084')
+    server.add_insecure_port('[::]:{0}'.format(port))
     server.start()
+
     try:
         while True:
             time.sleep(_ONE_DAY_IN_SECONDS)
-    except:
-        server.stop(0)
+    except KeyboardInterrupt:
+        server.stop(shutdown_grace_duration)
+
 
 if __name__ == '__main__':
-    serve()
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument(
+        '--port', type=int, default=8000, help='The port to listen on')
+    parser.add_argument(
+        '--shutdown_grace_duration', type=int, default=5,
+        help='The shutdown grace duration, in seconds')
+
+    args = parser.parse_args()
+    serve(args.port, args.shutdown_grace_duration)
