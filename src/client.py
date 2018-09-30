@@ -20,7 +20,8 @@ import grpc
 from generated import db_sync_pb2_grpc, db_sync_pb2
 import logging
 import socket
-
+import argparse_actions
+import argparse
 
 """
 #TODO : 
@@ -134,18 +135,19 @@ if __name__ == "__main__":
             '--timeout', 
             type=int, 
             default=30, 
-            help='The call timeout, in seconds'
+            help='The call timeout, in seconds',
             )
     parser.add_argument(
             '--api_key', 
             default=None, 
-            help='The API key to use for the call'
+            help='The API key to use for the call',
             )
     parser.add_argument(
             '--auth_token', 
             default=None,
-            help='The JWT auth token to use for the call'
+            help='The JWT auth token to use for the call',
             )
+
     try:
             args = parser.parse_args()
             sync_client = DbSyncClient(args.host, args.port, args.api_key, args.auth_token, args.timeout, args.chunk-size, args.source, args.destination)
