@@ -21,18 +21,6 @@ from generated import db_sync_pb2_grpc, db_sync_pb2
 import logging
 import socket
 
-#SOURCE = "/home/dheerajbhadani/testfiles/output_100M"
-SOURCE = "/var/lib/dbsync/test1"
-
-#DESTINATION = "/home/dheerajbhadani/destination/output_100M"
-DESTINATION = "/var/lib/test1"
-#SERVER = 'localhost'
-SERVER = '35.197.246.234'
-PORT = 80
-CHUNK_SIZE = 8192
-
-_TIMEOUT_SECONDS = 30
-
 
 """
 #TODO : 
@@ -56,12 +44,15 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 class DbSyncClient(object):
-    def __init__(self, source, destination, server, port, chunk_size):
+    def __init__(self, host, port, api_key, auth_token, timeout, chunk_size, source, destination):
         self._source = source
         self._destination = destination
-        self._server = server
+        self._host = host
         self._port = port
         self._chunk_size = chunk_size
+        self._api_key = api_key
+        self._auth_token = auth_token
+        self._timeout = timeout
 
 
     def file_data(self, stub):
@@ -69,7 +60,7 @@ class DbSyncClient(object):
         source.name = self._source
         source.chunksize = self._chunk_size
 
-        result = stub.Copy(source, _TIMEOUT_SECONDS)
+        result = stub.Copy(source, self._timeout)
         response = []
         for data in result:
             response.append(data.bytedata)
@@ -79,7 +70,7 @@ class DbSyncClient(object):
 
 
     def copy(self):
-        channel = grpc.insecure_channel('{server}:{port}'.format(server=self._server,port=self._port))
+        channel = grpc.insecure_channel('{server}:{port}'.format(server=self._host,port=self._port))
         stub = db_sync_pb2_grpc.DbSyncStub(channel)
         start_time = time.time()
         self.file_data(stub)
@@ -92,11 +83,72 @@ class DbSyncClient(object):
                            start=start_time,
                            end = end_time,
                            time_taken=diff,
-                           server = self._server,
+                           server = self._host,
                            client=socket.gethostbyname(socket.gethostname()),
                            chunk=self._chunk_size))
         return True
 
 if __name__ == "__main__":
-    sync_client = DbSyncClient(SOURCE, DESTINATION, SERVER, PORT, CHUNK_SIZE)
-    sync_client.copy()
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+
+    parser.add_argument(
+            '-s', metavar='source',
+            help='The source file or directory path',
+            action='store',
+            required=True,
+            )
+    parser.add_argument(
+            '-d', metavar='destination',
+            action='store',
+            help='The destination file or directory path',
+            required=True,
+            )
+    parser.add_argument(
+            '--host', 
+            metavar='host',
+            default='localhost',
+            action=argparse_actions.ProperIpFormatAction,
+            help='The host to connect to',
+            required=True,
+            )
+    parser.add_argument(
+            '-p', metavar='port',
+            action='store',
+            default=8000,
+            help='The port to connect to.',
+            required=True,
+            type=int
+            )
+    parser.add_argument(
+            '-c', metavar='chunk-size',
+            action='store',
+            choices=(1024, 2048, 4096, 8192),
+            help='Size of each chunk',
+            required=True,
+            type=int,
+            default=8192,
+            )
+    parser.add_argument(
+            '--timeout', 
+            type=int, 
+            default=30, 
+            help='The call timeout, in seconds'
+            )
+    parser.add_argument(
+            '--api_key', 
+            default=None, 
+            help='The API key to use for the call'
+            )
+    parser.add_argument(
+            '--auth_token', 
+            default=None,
+            help='The JWT auth token to use for the call'
+            )
+    try:
+            args = parser.parse_args()
+            sync_client = DbSyncClient(args.host, args.port, args.api_key, args.auth_token, args.timeout, args.chunk-size, args.source, args.destination)
+            sync_client.copy()
+    except argparse_actions.NonFolderError as e:
+            print e
