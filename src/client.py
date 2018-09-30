@@ -95,13 +95,13 @@ if __name__ == "__main__":
         formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument(
-            '-s', metavar='source',
+            '--source', metavar='source',
             help='The source file or directory path',
             action='store',
             required=True,
             )
     parser.add_argument(
-            '-d', metavar='destination',
+            '--destination', metavar='destination',
             action='store',
             help='The destination file or directory path',
             required=True,
@@ -112,22 +112,19 @@ if __name__ == "__main__":
             default='localhost',
             action=argparse_actions.ProperIpFormatAction,
             help='The host to connect to',
-            required=True,
             )
     parser.add_argument(
-            '-p', metavar='port',
+            '--port', metavar='port',
             action='store',
             default=8000,
             help='The port to connect to.',
-            required=True,
             type=int
             )
     parser.add_argument(
-            '-c', metavar='chunk-size',
+            '--chunk_size', metavar='chunk_size',
             action='store',
             choices=(1024, 2048, 4096, 8192),
             help='Size of each chunk',
-            required=True,
             type=int,
             default=8192,
             )
@@ -150,7 +147,7 @@ if __name__ == "__main__":
 
     try:
             args = parser.parse_args()
-            sync_client = DbSyncClient(args.host, args.port, args.api_key, args.auth_token, args.timeout, args.chunk-size, args.source, args.destination)
+            sync_client = DbSyncClient(args.host, args.port, args.api_key, args.auth_token, args.timeout, args.chunk_size, args.source, args.destination)
             sync_client.copy()
     except argparse_actions.NonFolderError as e:
             raise e
