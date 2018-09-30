@@ -153,4 +153,4 @@ if __name__ == "__main__":
             sync_client = DbSyncClient(args.host, args.port, args.api_key, args.auth_token, args.timeout, args.chunk-size, args.source, args.destination)
             sync_client.copy()
     except argparse_actions.NonFolderError as e:
-            print e
+            raise e
